@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>上班鼓励</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="./icon.svg" width="47" height="47" alt="">
+        <div>
+          <h1>上班鼓励</h1>
+          <p>WORK CHEER CLUB</p>
+        </div>
+      </div>
+      <button class="settings-button" id="open-settings" type="button">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.5"/><circle cx="15" cy="17" r="2.5"/>
+        </svg>
+        工资与作息
+      </button>
+    </header>
+
+    <div class="edition">
+      <span>打工番剧结算卡</span>
+      <time id="today"></time>
+    </div>
+
+    <section class="earnings" id="earnings" data-status="before" aria-labelledby="earnings-title">
+      <div class="earnings-copy">
+        <span class="badge" id="status"></span>
+        <h2 id="earnings-title">今天已赚</h2>
+        <p class="amount"><span class="currency">¥</span><span id="earned">0.00</span></p>
+        <p class="estimate">按当前工资和作息估算</p>
+        <div class="progress-line">
+          <label for="progress">今日工作进度</label>
+          <span id="percent">0%</span>
+        </div>
+        <progress id="progress" max="1" value="0"></progress>
+      </div>
+      <div class="panel-art">
+        <div class="art-label"><span>NO. 01</span><span>打工仓鼠</span></div>
+        <img src="./hamster.svg" class="hamster" width="356" height="251" alt="">
+        <p id="quote" class="quote"></p>
+      </div>
+    </section>
+
+    <dl class="stats">
+      <div><dt>01 <span>已工作</span></dt><dd id="worked">0 小时 0 分</dd></div>
+      <div><dt>02 <span>计划日薪</span></dt><dd id="daily">¥0.00</dd></div>
+      <div><dt>03 <span>参考时薪</span></dt><dd id="hourly">¥0.00</dd></div>
+    </dl>
+
+    <footer class="footer">
+      <div class="today-plan">
+        <label for="override">今日安排</label>
+        <select id="override">
+          <option value="auto">按作息</option>
+          <option value="work">今天上班</option>
+          <option value="rest">今天休息</option>
+        </select>
+      </div>
+      <p id="schedule-note"></p>
+    </footer>
+    <p class="error" id="storage-error" role="alert" hidden></p>
+  </main>
+
+  <dialog id="settings" aria-labelledby="settings-title">
+    <form id="settings-form">
+      <div class="dialog-top">
+        <div><p class="dialog-kicker">SETTINGS</p><h2 id="settings-title">工资与作息</h2></div>
+        <button type="button" id="close-settings" class="close" aria-label="关闭设置">×</button>
+      </div>
+      <div class="field-grid">
+        <label>月工资（元）<input name="salary" type="number" min="0" max="100000000" step="0.01" required></label>
+        <label>月计薪天数<input name="payDays" type="number" min="0.01" max="31" step="0.01" required></label>
+      </div>
+      <fieldset>
+        <legend>固定工作日</legend>
+        <div class="week">
+          <label><input name="workDays" type="checkbox" value="1"><span>一</span></label>
+          <label><input name="workDays" type="checkbox" value="2"><span>二</span></label>
+          <label><input name="workDays" type="checkbox" value="3"><span>三</span></label>
+          <label><input name="workDays" type="checkbox" value="4"><span>四</span></label>
+          <label><input name="workDays" type="checkbox" value="5"><span>五</span></label>
+          <label><input name="workDays" type="checkbox" value="6"><span>六</span></label>
+          <label><input name="workDays" type="checkbox" value="0"><span>日</span></label>
+        </div>
+        <p class="field-note">月计薪天数用于计算日薪，固定工作日决定哪天开始计薪。</p>
+      </fieldset>
+      <div class="field-grid">
+        <label>上班<input name="start" type="time" required></label>
+        <label>下班<input name="end" type="time" required></label>
+      </div>
+      <label class="break-toggle"><input type="checkbox" name="hasBreak">午休期间暂停计薪</label>
+      <div class="field-grid" id="break-fields">
+        <label>午休开始<input name="breakStart" type="time" required></label>
+        <label>午休结束<input name="breakEnd" type="time" required></label>
+      </div>
+      <p class="error" id="form-error" role="alert" hidden></p>
+      <div class="dialog-footer">
+        <span>设置仅保存在本机</span>
+        <button class="save" type="submit">保存设置</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

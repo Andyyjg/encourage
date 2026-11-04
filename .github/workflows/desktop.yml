@@ -1,0 +1,45 @@
+name: Desktop installers
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            script: build:win
+            artifact: windows-x64
+            file: src-tauri/target/release/bundle/nsis/*.exe
+          - runner: macos-15
+            script: build:mac
+            artifact: macos-arm64
+            file: src-tauri/target/release/bundle/dmg/*.dmg
+          - runner: macos-15-intel
+            script: build:mac
+            artifact: macos-x64
+            file: src-tauri/target/release/bundle/dmg/*.dmg
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Set up Rust
+        run: rustup update stable && rustup default stable
+      - run: npm ci
+      - run: npm run ${{ matrix.script }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.file }}
+          if-no-files-found: error

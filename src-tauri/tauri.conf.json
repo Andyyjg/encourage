@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "上班鼓励",
+  "mainBinaryName": "work-cheer",
+  "version": "0.1.0",
+  "identifier": "com.workcheer.desktop",
+  "build": {
+    "frontendDist": "../app"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "上班鼓励",
+        "width": 960,
+        "height": 740,
+        "minWidth": 600,
+        "minHeight": 540,
+        "center": true,
+        "backgroundColor": "#f8f2e6"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "useLocalToolsDir": true,
+    "icon": ["icons/icon.ico", "icons/icon.icns", "icons/icon.png"],
+    "windows": {
+      "nsis": {
+        "languages": ["SimpChinese", "English"],
+        "installerIcon": "icons/icon.ico"
+      }
+    }
+  }
+}
