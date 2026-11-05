@@ -21,7 +21,7 @@ const ui = Object.fromEntries([
   "today", "earnings", "earnings-title", "status", "sign", "earned", "estimate", "quote", "art-enemy",
   "progress", "progress-label", "percent", "worked", "daily", "daily-label", "hourly",
   "hourly-label", "override", "schedule-note", "debt-detail", "storage-error", "settings",
-  "settings-form", "form-error", "break-fields", "debt-fields",
+  "settings-form", "form-error", "break-fields", "debt-fields", "toggle-mini", "exit-mini",
 ].map((id) => [id, byId(id)]));
 const form = ui["settings-form"];
 const inputs = form.elements;
@@ -35,6 +35,19 @@ function celebrate() {
   ui.earnings.classList.add("celebrate");
   window.clearTimeout(celebrationTimer);
   celebrationTimer = window.setTimeout(() => ui.earnings.classList.remove("celebrate"), 1100);
+}
+
+async function setMiniMode(enabled) {
+  try {
+    const invoke = window.__TAURI__?.core?.invoke;
+    if (invoke) await invoke("set_mini_mode", { mini: enabled });
+    document.documentElement.classList.toggle("mini-mode", enabled);
+    ui["toggle-mini"].hidden = enabled;
+    ui["exit-mini"].hidden = !enabled;
+    message(ui["storage-error"], "");
+  } catch {
+    message(ui["storage-error"], "小窗切换失败，请重试。");
+  }
 }
 
 function load() {
@@ -200,6 +213,8 @@ function openSettings() {
 
 byId("open-settings").addEventListener("click", openSettings);
 byId("close-settings").addEventListener("click", () => ui.settings.close());
+ui["toggle-mini"].addEventListener("click", () => setMiniMode(true));
+ui["exit-mini"].addEventListener("click", () => setMiniMode(false));
 inputs.hasBreak.addEventListener("change", syncBreakFields);
 form.addEventListener("input", updateCostPreviews);
 form.addEventListener("change", updateCostPreviews);

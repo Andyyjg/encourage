@@ -24,6 +24,7 @@ button, select { cursor: pointer; }
   align-items: center;
 }
 .topbar, .edition, .footer { justify-content: space-between; }
+.top-actions { display: flex; align-items: center; gap: 9px; }
 .brand { gap: 10px; }
 .brand h1 { font-size: 25px; line-height: 1.12; letter-spacing: .03em; font-weight: 900; }
 .brand p { margin-top: 5px; font: 800 10px/1.2 system-ui, sans-serif; letter-spacing: .21em; color: var(--muted); }
@@ -239,8 +240,34 @@ legend { padding: 0; }
 .dialog-footer { margin-top: 18px; }
 .save { background: var(--orange); }
 
+.mini-mode body { min-width: 0; overflow: hidden; background: #f8f2e6; }
+.mini-mode .shell { width: auto; margin: 0; padding: 10px 12px; }
+.mini-mode .topbar { gap: 8px; margin-bottom: 9px; }
+.mini-mode .brand { gap: 8px; }
+.mini-mode .brand img { width: 34px; height: 34px; }
+.mini-mode .brand h1 { font-size: 17px; }
+.mini-mode .brand p { display: none; }
+.mini-mode .settings-button, .mini-mode #toggle-mini { display: none; }
+.mini-mode #exit-mini { display: inline-flex; min-height: 32px; padding: 5px 9px; font-size: 11px; }
+.mini-mode .edition, .mini-mode .stats, .mini-mode .footer, .mini-mode #storage-error { display: none; }
+.mini-mode .earnings { grid-template-columns: minmax(0, 1fr) 118px; min-height: 225px; border-radius: 12px; box-shadow: 3px 3px var(--ink); }
+.mini-mode .earnings-copy { padding: 13px 12px; }
+.mini-mode .badge { padding: 4px 8px; font-size: 10px; }
+.mini-mode .earnings h2 { margin-top: 10px; font-size: 16px; }
+.mini-mode .amount { font-size: clamp(34px, 11vw, 48px); }
+.mini-mode .amount.compact { font-size: 27px; }
+.mini-mode .estimate { margin-top: 3px; font-size: 9px; line-height: 1.35; }
+.mini-mode .progress-line { margin: 13px 0 5px; font-size: 10px; }
+.mini-mode progress { height: 10px; }
+.mini-mode .debt-detail { margin-top: 5px; font-size: 9px; line-height: 1.35; }
+.mini-mode .panel-art { padding: 10px 7px; }
+.mini-mode .art-label { font-size: 8px; letter-spacing: .06em; }
+.mini-mode .hamster { max-height: 125px; }
+.mini-mode .quote { padding: 5px 6px; font-size: 10px; }
+
 @media (max-width: 700px) {
   .shell { width: calc(100% - 42px); padding-top: 18px; }
+  .topbar { flex-wrap: wrap; }
   .earnings { min-height: 306px; }
   .earnings-copy { padding: 19px; }
   .panel-art { padding: 14px 10px; }
@@ -253,4 +280,9 @@ legend { padding: 0; }
   .hamster { max-height: 185px; }
   .stats { gap: 7px; }
   .stats > div { padding: 8px 6px; }
+  .mini-mode .shell { width: auto; padding: 10px; }
+  .mini-mode .topbar { flex-wrap: nowrap; }
+  .mini-mode .earnings { grid-template-columns: minmax(0, 1fr) 108px; }
+  .mini-mode .panel-art { border-left: 2px solid var(--ink); border-top: 0; }
+  .mini-mode .hamster { max-height: 115px; }
 }

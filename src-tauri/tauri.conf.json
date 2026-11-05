@@ -8,6 +8,7 @@
     "frontendDist": "../app"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "title": "上班鼓励",

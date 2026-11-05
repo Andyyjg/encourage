@@ -18,12 +18,21 @@
           <p>WORK CHEER CLUB</p>
         </div>
       </div>
-      <button class="settings-button" id="open-settings" type="button">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.5"/><circle cx="15" cy="17" r="2.5"/>
-        </svg>
-        工资与作息
-      </button>
+      <div class="top-actions">
+        <button class="settings-button mini-toggle" id="toggle-mini" type="button" aria-label="切换到小窗模式">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M11 14h6v4"/><path d="m17 14-7 6"/>
+          </svg>
+          小窗模式
+        </button>
+        <button class="settings-button" id="open-settings" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.5"/><circle cx="15" cy="17" r="2.5"/>
+          </svg>
+          工资与作息
+        </button>
+        <button class="settings-button mini-exit" id="exit-mini" type="button" hidden>返回完整窗口</button>
+      </div>
     </header>
 
     <div class="edition">
