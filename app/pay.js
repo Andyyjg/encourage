@@ -7,6 +7,12 @@ export const defaults = {
   hasBreak: true,
   breakStart: "12:00",
   breakEnd: "13:00",
+  rent: 0,
+  rentPeriod: "monthly",
+  food: 0,
+  foodPeriod: "daily",
+  misc: 0,
+  miscPeriod: "monthly",
 };
 
 const minute = 60_000;
@@ -34,6 +40,14 @@ export function validate(settings) {
         settings.breakStart < settings.breakEnd && settings.breakEnd < settings.end))) {
     return "午休须位于上班与下班之间，且结束时间晚于开始时间。";
   }
+  for (const item of ["rent", "food", "misc"]) {
+    if (!Number.isFinite(settings[item]) || settings[item] < 0 || settings[item] > 100_000_000) {
+      return "房租、伙食费和杂项须为 0 到 100,000,000 元之间的金额。";
+    }
+    if (!["monthly", "daily"].includes(settings[`${item}Period`])) {
+      return "请选择每月或每天的开销填写周期。";
+    }
+  }
   return "";
 }
 
@@ -46,6 +60,13 @@ export function dateKey(date) {
 function atTime(date, time) {
   const [hours, minutes] = time.split(":").map(Number);
   return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes).getTime();
+}
+
+export function dailyCost(settings, item, date = new Date()) {
+  const amount = settings[item];
+  if (settings[`${item}Period`] === "daily") return Math.round(amount * 100) / 100;
+  const daysThisMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  return Math.round(amount / daysThisMonth * 100) / 100;
 }
 
 export function calculate(settings, now, override = "auto") {
@@ -65,6 +86,14 @@ export function calculate(settings, now, override = "auto") {
     ? periods.reduce((sum, [from, to]) => sum + Math.max(0, Math.min(now.getTime(), to) - from), 0)
     : 0;
   const progress = scheduledMs > 0 ? elapsedMs / scheduledMs : 0;
+  const earned = Math.round(dailyPay * progress * 100) / 100;
+  const costs = ["rent", "food", "misc"].map((key) => ({
+    key,
+    amount: dailyCost(settings, key, now),
+  }));
+  const dailyCosts = Math.round(costs.reduce((sum, cost) => sum + cost.amount, 0) * 100) / 100;
+  const debtProgress = dailyCosts > 0 ? Math.min(earned / dailyCosts, 1) : 1;
+  const net = Math.round((earned - dailyCosts) * 100) / 100;
 
   let status = "working";
   if (!workingToday || scheduledMs === 0) status = "rest";
@@ -72,5 +101,5 @@ export function calculate(settings, now, override = "auto") {
   else if (now >= end) status = "done";
   else if (settings.hasBreak && now >= pauseStart && now < pauseEnd) status = "break";
 
-  return { status, elapsedMs, scheduledMs, dailyPay, hourlyPay, earned: dailyPay * progress, progress };
+  return { status, elapsedMs, scheduledMs, dailyPay, hourlyPay, earned, progress, dailyCosts, debtProgress, net };
 }

@@ -52,8 +52,13 @@ button, select { cursor: pointer; }
   font-weight: 800;
   letter-spacing: .09em;
 }
+.edition-left { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .edition span { background: var(--ink); color: var(--paper); padding: 5px 10px; border-radius: 4px; }
 .edition time { color: var(--muted); }
+.mode-switch { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid #bca58e; border-radius: 8px; background: #f2e6d5; }
+.mode-switch button { min-height: 27px; padding: 4px 9px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 900; letter-spacing: .04em; }
+.mode-switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); box-shadow: 1px 1px #a77a5d; }
+.mode-switch button:hover:not([aria-pressed="true"]) { background: #fffaf0; color: var(--ink); }
 
 .earnings {
   display: grid;
@@ -94,11 +99,20 @@ button, select { cursor: pointer; }
 }
 .amount.compact { font-size: clamp(24px, 4vw, 43px); letter-spacing: -.045em; }
 .currency { font-size: .53em; color: #a14127; letter-spacing: 0; }
+.sign { font-size: .6em; letter-spacing: 0; color: #a14127; }
 .estimate { margin-top: 7px; color: var(--muted); font-size: 12px; }
 .progress-line { display: flex; justify-content: space-between; align-items: center; margin: 28px 0 7px; font-size: 12px; font-weight: 800; }
+.debt-detail { margin-top: 8px; color: var(--muted); font-size: 10px; line-height: 1.5; font-weight: 700; }
 progress { display: block; width: 100%; height: 12px; appearance: none; border: 1.5px solid var(--ink); border-radius: 4px; overflow: hidden; background: #eee1cf; }
 progress::-webkit-progress-bar { background: #eee1cf; }
-progress::-webkit-progress-value { background: repeating-linear-gradient(125deg, #ffad63 0 8px, #f88250 8px 12px); }
+progress::-webkit-progress-value { background: repeating-linear-gradient(125deg, #ffad63 0 8px, #f88250 8px 12px); transition: width .55s ease; }
+[data-mode="debt"] progress::-webkit-progress-value { background: repeating-linear-gradient(125deg, #b5d98a 0 8px, #79b75e 8px 12px); }
+[data-mode="debt"] .currency, [data-mode="debt"] .sign { color: #3f7b45; }
+[data-mode="debt"][data-status="working"] .badge { background: #cce8bb; }
+[data-mode="debt"][data-balance="negative"] .currency, [data-mode="debt"][data-balance="negative"] .sign { color: #a14127; }
+[data-mode="debt"][data-balance="positive"] .currency, [data-mode="debt"][data-balance="positive"] .sign { color: #3f7b45; }
+[data-mode="debt"][data-status="working"] .badge::before { animation: heartbeat 1.1s ease-in-out infinite; }
+[data-mode="debt"] .panel-art { background: repeating-linear-gradient(130deg, #f6b05e 0 12px, #ffc36e 12px 14px); }
 
 .panel-art {
   display: grid;
@@ -140,16 +154,44 @@ progress::-webkit-progress-value { background: repeating-linear-gradient(125deg,
   font: 900 42px/1 system-ui, sans-serif;
   color: #fff0a1;
   -webkit-text-stroke: 1.5px var(--ink);
+  z-index: 2;
   pointer-events: none;
   animation: payday .8s ease-out both;
 }
+.celebrate .panel-art::before { content: "🪙  ✨  🪙"; position: absolute; inset: 30% 0 auto; z-index: 1; text-align: center; font-size: 34px; pointer-events: none; animation: coin-burst 1s ease-out both; }
+.celebrate .amount { animation: jackpot .8s cubic-bezier(.2, .8, .3, 1.2); }
+[data-mode="debt"].celebrate .panel-art::after { content: "✦ KO！余额转正 ✦"; font-size: 34px; color: #f8ffbd; }
+.debt-fields { margin-top: 16px; padding-top: 13px; border-top: 1px dashed #c7b39c; }
+.section-title { margin: 12px 0 0; font-size: 14px; font-weight: 900; }
+.debt-intro { margin-top: 3px; }
+.expense-row { display: grid; grid-template-columns: 62px minmax(0, 1fr); align-items: center; gap: 4px 9px; margin-top: 9px; }
+.expense-row > label { font-size: 12px; font-weight: 800; }
+.expense-inputs { display: grid; grid-template-columns: minmax(0, 1fr) 86px; gap: 7px; }
+.expense-inputs input, .expense-inputs select { width: 100%; min-width: 0; min-height: 34px; padding: 5px 7px; border: 1px solid #988371; border-radius: 6px; background: #fffdf8; }
+.expense-inputs select { font-size: 12px; }
+.expense-row small { grid-column: 2; color: #6b8c52; font-size: 10px; font-weight: 700; }
 @keyframes payday {
   from { opacity: 0; transform: translateY(28px) scale(.7); }
   26% { opacity: 1; }
   to { opacity: 0; transform: translateY(-60px) scale(1.18); }
 }
+@keyframes coin-burst {
+  from { opacity: 0; transform: translateY(30px) scale(.55) rotate(-12deg); }
+  30% { opacity: 1; }
+  to { opacity: 0; transform: translateY(-55px) scale(1.2) rotate(12deg); }
+}
+@keyframes jackpot {
+  0%, 100% { transform: scale(1); }
+  35% { transform: scale(1.08) rotate(-1deg); }
+  68% { transform: scale(.98) rotate(1deg); }
+}
+@keyframes heartbeat {
+  50% { transform: scale(1.35); box-shadow: 0 0 0 4px #79b75e38; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .celebrate .panel-art::after { animation-duration: .01s; }
+  .celebrate .panel-art::after, .celebrate .panel-art::before, .celebrate .amount,
+  [data-mode="debt"][data-status="working"] .badge::before { animation-duration: .01s; animation-iteration-count: 1; }
+  progress::-webkit-progress-value { transition-duration: .01s; }
 }
 
 .stats { margin: 21px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; }
@@ -164,8 +206,9 @@ progress::-webkit-progress-value { background: repeating-linear-gradient(125deg,
 
 dialog {
   color: var(--ink);
-  width: min(470px, calc(100% - 36px));
+  width: min(520px, calc(100% - 36px));
   max-height: calc(100% - 36px);
+  overflow-y: auto;
   padding: 20px;
   border: 2px solid var(--ink);
   border-radius: 15px;

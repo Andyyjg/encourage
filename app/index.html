@@ -27,7 +27,13 @@
     </header>
 
     <div class="edition">
-      <span>打工番剧结算卡</span>
+      <div class="edition-left">
+        <span>打工番剧结算卡</span>
+        <div class="mode-switch" role="group" aria-label="选择计算模式">
+          <button type="button" data-mode="payroll" aria-pressed="true">计薪模式</button>
+          <button type="button" data-mode="debt" aria-pressed="false">还债模式</button>
+        </div>
+      </div>
       <time id="today"></time>
     </div>
 
@@ -35,16 +41,17 @@
       <div class="earnings-copy">
         <span class="badge" id="status"></span>
         <h2 id="earnings-title">今天已赚</h2>
-        <p class="amount"><span class="currency">¥</span><span id="earned">0.00</span></p>
-        <p class="estimate">按当前工资和作息估算</p>
+        <p class="amount"><span id="sign" class="sign" hidden></span><span class="currency">¥</span><span id="earned">0.00</span></p>
+        <p class="estimate" id="estimate">按当前工资和作息估算</p>
         <div class="progress-line">
-          <label for="progress">今日工作进度</label>
+          <label id="progress-label" for="progress">今日工作进度</label>
           <span id="percent">0%</span>
         </div>
         <progress id="progress" max="1" value="0"></progress>
+        <p id="debt-detail" class="debt-detail" hidden></p>
       </div>
       <div class="panel-art">
-        <div class="art-label"><span>NO. 01</span><span>打工仓鼠</span></div>
+        <div class="art-label"><span>NO. 01</span><span id="art-enemy">打工仓鼠</span></div>
         <img src="./hamster.svg" class="hamster" width="356" height="251" alt="">
         <p id="quote" class="quote"></p>
       </div>
@@ -52,8 +59,8 @@
 
     <dl class="stats">
       <div><dt>01 <span>已工作</span></dt><dd id="worked">0 小时 0 分</dd></div>
-      <div><dt>02 <span>计划日薪</span></dt><dd id="daily">¥0.00</dd></div>
-      <div><dt>03 <span>参考时薪</span></dt><dd id="hourly">¥0.00</dd></div>
+      <div><dt>02 <span id="daily-label">计划日薪</span></dt><dd id="daily">¥0.00</dd></div>
+      <div><dt>03 <span id="hourly-label">参考时薪</span></dt><dd id="hourly">¥0.00</dd></div>
     </dl>
 
     <footer class="footer">
@@ -73,13 +80,16 @@
   <dialog id="settings" aria-labelledby="settings-title">
     <form id="settings-form">
       <div class="dialog-top">
-        <div><p class="dialog-kicker">SETTINGS</p><h2 id="settings-title">工资与作息</h2></div>
+        <div><p class="dialog-kicker">SETTINGS</p><h2 id="settings-title">收入、开销与作息</h2></div>
         <button type="button" id="close-settings" class="close" aria-label="关闭设置">×</button>
       </div>
+      <section>
+        <h3 class="section-title">收入</h3>
       <div class="field-grid">
         <label>月工资（元）<input name="salary" type="number" min="0" max="100000000" step="0.01" required></label>
         <label>月计薪天数<input name="payDays" type="number" min="0.01" max="31" step="0.01" required></label>
       </div>
+      </section>
       <fieldset>
         <legend>固定工作日</legend>
         <div class="week">
@@ -102,6 +112,34 @@
         <label>午休开始<input name="breakStart" type="time" required></label>
         <label>午休结束<input name="breakEnd" type="time" required></label>
       </div>
+      <section id="debt-fields" class="debt-fields" hidden>
+        <h3 class="section-title">每日生活成本</h3>
+        <p class="field-note debt-intro">还债模式会先记下当天成本，工作收入实时冲抵；月度金额会按当月天数折算。</p>
+        <div class="expense-row">
+          <label for="rent">房租</label>
+          <div class="expense-inputs">
+            <input id="rent" name="rent" type="number" min="0" max="100000000" step="0.01" required>
+            <select name="rentPeriod" aria-label="房租填写周期"><option value="monthly">每月</option><option value="daily">每天</option></select>
+          </div>
+          <small id="rent-daily"></small>
+        </div>
+        <div class="expense-row">
+          <label for="food">伙食费</label>
+          <div class="expense-inputs">
+            <input id="food" name="food" type="number" min="0" max="100000000" step="0.01" required>
+            <select name="foodPeriod" aria-label="伙食费填写周期"><option value="monthly">每月</option><option value="daily">每天</option></select>
+          </div>
+          <small id="food-daily"></small>
+        </div>
+        <div class="expense-row">
+          <label for="misc">杂七杂八</label>
+          <div class="expense-inputs">
+            <input id="misc" name="misc" type="number" min="0" max="100000000" step="0.01" required>
+            <select name="miscPeriod" aria-label="杂项填写周期"><option value="monthly">每月</option><option value="daily">每天</option></select>
+          </div>
+          <small id="misc-daily"></small>
+        </div>
+      </section>
       <p class="error" id="form-error" role="alert" hidden></p>
       <div class="dialog-footer">
         <span>设置仅保存在本机</span>
